@@ -27,7 +27,7 @@ class MessageReceiver(Thread):
 
     def run(self):
         while True:
-            data = self.connection.recv(1024)
+            data = self.connection.recv(1024).decode()
             if data:
                 for message in data.split("\n"):
                     if message:

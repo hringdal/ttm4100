@@ -33,7 +33,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
 
         # Loop that listens for messages from the client
         while True:
-            received_string = self.connection.recv(4096)
+            received_string = self.connection.recv(4096).decode()
 
             # TODO: Add handling of received payload from client
 
@@ -49,7 +49,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response':'Error',
+                        'response':'error',
                         'content':'username already exist'
                         }
                     self.send_data(response)
@@ -57,14 +57,14 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response':'Error',
+                        'response':'error',
                         'content':'already logged in'
                     }
                 elif not re.match("^[A-Za-z0-9]+$", content):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response':'Error',
+                        'response':'error',
                         'content':'Username can only contain letters and numbers, and cannot be empty'
                     }
                 else:
@@ -72,7 +72,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Info',
+                        'response': 'info',
                         'content': 'login successful!'
                         }
                     self.send_data(response)
@@ -90,15 +90,15 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Info',
-                        'content': None
+                        'response': 'info',
+                        'content': "Logout successful :)"
                         }
                     self.send_data(response)
                 else:
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Error',
+                        'response': 'error',
                         'content': 'Not logged in'
                     }
                     self.send_data(response)
@@ -108,7 +108,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                         messages.append(json.dumps(content))
                         response = {
                             'timestamp':time.strftime("%H:%M:%S"),
-                            'sender':'server',
+                            'sender': clients[self],
                             'response': 'message',
                             'content': content
                         }
@@ -118,7 +118,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                         response = {
                             'timestamp':time.strftime("%H:%M:%S"),
                             'sender':'server',
-                            'response': 'Error',
+                            'response': 'error',
                             'content': 'Not string in content'
                         }
                         self.send_data(response)
@@ -126,15 +126,15 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Error',
+                        'response': 'error',
                         'content': 'Not logged in'
                     }
                     self.send_data(response)
             elif request == 'names':
                 if self.logged_in:
-                    names = []
+                    names = ""
                     for client in clients:
-                        names.append(clients[client])
+                        names += (clients[client]) + ", "
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
@@ -146,7 +146,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Error',
+                        'response': 'error',
                         'content': 'Not logged in'
                     }
                     self.send_data(response)
@@ -154,7 +154,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                 response = {
                     'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Info',
+                        'response': 'info',
                         'content': '''login <username> - log in with the given username \n
                                     logout - log out \n
                                     msg <message> - send message \n
@@ -165,14 +165,14 @@ class ClientHandler(socketserver.BaseRequestHandler):
                 response ={
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Error',
+                        'response': 'error',
                         'content': 'not given command, use help'
                     }
                 self.send_data(response)
                 
     def send_data(self, response):
-        self.request.sendall(json.dumps(response))
-        self.request.sendall("\n")
+        self.request.sendall(json.dumps(response).encode())
+        self.request.sendall("\n".encode())
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     """

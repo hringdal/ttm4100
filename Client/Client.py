@@ -18,7 +18,7 @@ class Client:
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         # TODO: Finish init process with necessary code
-        self.host = (host, server_port)
+        self.host = host
         self.server_port = server_port
 
         self.run()
@@ -47,19 +47,23 @@ class Client:
     def receive_message(self, message):
         # TODO: Handle incoming message
         messageParser = MessageParser()
-        response = MessageParser.parse(message)
+        response = messageParser.parse(message)
         print(response)
 
     def send_payload(self, data):
         # TODO: Handle sending of a payload
-        request, content = data.split(" ")
+        msg = data.split(" ")
+        request = msg[0]
+        content = ""
+        if len(msg) > 1:
+            content = msg[1]
         if request in ['logout', 'names', 'help']:
             content = None
         message = {
             'request': request,
             'content': content
         }
-        self.connection.sendall(json.dumps(message))
+        self.connection.sendall(json.dumps(message).encode())
     # More methods may be needed!
 
 
