@@ -24,6 +24,7 @@ class Client:
         self.run()
 
     def run(self):
+        # TODO
         # Initiate the connection to the server
         self.connection.connect((self.host, self.server_port))
         receiver = MessageReceiver(self, self.connection)
@@ -40,15 +41,21 @@ class Client:
     
     def disconnect(self):
         # TODO: Handle disconnection
-        pass
+        self.connection.close()
 
     def receive_message(self, message):
         # TODO: Handle incoming message
-        pass
+        messageParser = MessageParser()
+        response = MessageParser.parse(message)
+        print(response)
 
     def send_payload(self, data):
         # TODO: Handle sending of a payload
-        pass
+        message = {
+            'request': data.partition(' ')[0],
+            'content': data.partition(' ')[2]
+        }
+        self.connection.sendall(json.dumps(message))
     # More methods may be needed!
 
 
