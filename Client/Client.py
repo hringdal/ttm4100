@@ -32,6 +32,7 @@ class Client:
 
         running = True
         while running:
+            print("What to do: ")
             client_input = input()
             if client_input == "exit":
                 running = False
@@ -52,6 +53,8 @@ class Client:
     def send_payload(self, data):
         # TODO: Handle sending of a payload
         request, content = data.split(" ")
+        if request in ['logout', 'names', 'help']:
+            content = None
         message = {
             'request': request,
             'content': content
