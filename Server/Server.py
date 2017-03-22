@@ -91,7 +91,11 @@ class ClientHandler(socketserver.BaseRequestHandler):
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
                         'response': 'info',
+<<<<<<< HEAD
                         'content': "Logout successful :)"
+=======
+                        'content': None
+>>>>>>> e6b3990dc70f12ef77b579724fa1be63e1630cc9
                         }
                     self.send_data(response)
                 else:
