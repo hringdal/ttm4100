@@ -49,7 +49,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response':'Error',
+                        'response':'error',
                         'content':'username already exist'
                         }
                     self.send_data(response)
@@ -57,14 +57,14 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response':'Error',
+                        'response':'error',
                         'content':'already logged in'
                     }
                 elif not re.match("^[A-Za-z0-9]+$", content):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response':'Error',
+                        'response':'error',
                         'content':'Username can only contain letters and numbers, and cannot be empty'
                     }
                 else:
@@ -72,7 +72,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Info',
+                        'response': 'info',
                         'content': 'login successful!'
                         }
                     self.send_data(response)
@@ -90,7 +90,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Info',
+                        'response': 'info',
                         'content': None
                         }
                     self.send_data(response)
@@ -98,7 +98,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Error',
+                        'response': 'error',
                         'content': 'Not logged in'
                     }
                     self.send_data(response)
@@ -118,7 +118,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                         response = {
                             'timestamp':time.strftime("%H:%M:%S"),
                             'sender':'server',
-                            'response': 'Error',
+                            'response': 'error',
                             'content': 'Not string in content'
                         }
                         self.send_data(response)
@@ -126,7 +126,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Error',
+                        'response': 'error',
                         'content': 'Not logged in'
                     }
                     self.send_data(response)
@@ -146,7 +146,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Error',
+                        'response': 'error',
                         'content': 'Not logged in'
                     }
                     self.send_data(response)
@@ -154,7 +154,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                 response = {
                     'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Info',
+                        'response': 'info',
                         'content': '''login <username> - log in with the given username \n
                                     logout - log out \n
                                     msg <message> - send message \n
@@ -165,7 +165,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                 response ={
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
-                        'response': 'Error',
+                        'response': 'error',
                         'content': 'not given command, use help'
                     }
                 self.send_data(response)
