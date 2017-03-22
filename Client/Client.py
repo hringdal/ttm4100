@@ -51,9 +51,10 @@ class Client:
 
     def send_payload(self, data):
         # TODO: Handle sending of a payload
+        request, content = data.split(" ")
         message = {
-            'request': data.partition(' ')[0],
-            'content': data.partition(' ')[2]
+            'request': request,
+            'content': content
         }
         self.connection.sendall(json.dumps(message))
     # More methods may be needed!
