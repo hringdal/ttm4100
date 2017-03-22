@@ -2,6 +2,7 @@
 import socketserver
 import json
 import time
+import re
 
 """
 Variables and functions that must be used by all the ClientHandler objects
@@ -58,6 +59,13 @@ class ClientHandler(socketserver.BaseRequestHandler):
                         'sender':'server',
                         'response':'Error',
                         'content':'already logged in'
+                    }
+                elif not re.match("^[A-Za-z0-9]+$", content):
+                    response = {
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response':'Error',
+                        'content':'Username can only contain letters and numbers, and cannot be empty'
                     }
                 else:
                     clients[self] = content
