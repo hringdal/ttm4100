@@ -26,23 +26,72 @@ class ClientHandler(socketserver.BaseRequestHandler):
         self.ip = self.client_address[0]
         self.port = self.client_address[1]
         self.connection = self.request
-
         self.logged_in = False
+
+
 
         # Loop that listens for messages from the client
         while True:
             received_string = self.connection.recv(4096)
-            
+
             # TODO: Add handling of received payload from client
 
             received_dict = json.loads(received_string)
-
             request = received_dict['request']
             content = received_dict['content']
 
+
             # handle different requests with if/else
-            data = {}
-            self.connection.sendall(json.dumps(data))
+
+            if request == 'login':
+                if content in clients.values():
+                    response = {
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response':'Error',
+                        'content':'username already exist'
+                        }
+                    self.send_data(response)
+                elif self.logged_in:
+                    response = {
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response':'Error',
+                        'content':'already logged in'
+                    }
+                else:
+                    clients[self] = content
+                    response = {
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response': 'Info',
+                        'content': 'login successful!'
+                        }
+                    self.send_data(response)
+                    self.logged_in = True
+                    response = {
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response': 'history',
+                        'content': messages
+                    }
+            elif request == 'logout':
+                if self.logged_in:
+                    self.logged_in = False
+                    response = {
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response': 'Info',
+                        'content': None
+                        }
+
+        data = {}
+        self.connection.sendall(json.dumps(data))
+
+
+    def send_data(self, response):
+        self.request.sendall(json.dumps(response))
+        self.request.sendall("\n")
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     """
