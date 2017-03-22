@@ -74,7 +74,8 @@ class ClientHandler(socketserver.BaseRequestHandler):
                         'sender':'server',
                         'response': 'history',
                         'content': messages
-                    }
+                        }
+                    self.send_data(response)
             elif request == 'logout':
                 if self.logged_in:
                     self.logged_in = False
@@ -84,11 +85,83 @@ class ClientHandler(socketserver.BaseRequestHandler):
                         'response': 'Info',
                         'content': None
                         }
-
-        data = {}
-        self.connection.sendall(json.dumps(data))
-
-
+                    self.send_data(response)
+                else:
+                    response = {
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response': 'Error',
+                        'content': 'Not logged in'
+                    }
+                    self.send_data(response)
+            elif request == 'msg':
+                if self.logged_in:
+                    if type(content) is str:
+                        messages.append(json.dumps(content))
+                        response = {
+                            'timestamp':time.strftime("%H:%M:%S"),
+                            'sender':'server',
+                            'response': 'message',
+                            'content': content
+                        }
+                        for client in clients:
+                            client.send_data(response)
+                    else:
+                        response = {
+                            'timestamp':time.strftime("%H:%M:%S"),
+                            'sender':'server',
+                            'response': 'Error',
+                            'content': 'Not string in content'
+                        }
+                        self.send_data(response)
+                else:
+                    response = {
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response': 'Error',
+                        'content': 'Not logged in'
+                    }
+                    self.send_data(response)
+            elif request == 'names':
+                if self.logged_in:
+                    names = []
+                    for client in clients:
+                        names.append(clients[client])
+                    response = {
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response': 'info',
+                        'content': names
+                    }
+                    self.send_data(response)
+                else:
+                    response = {
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response': 'Error',
+                        'content': 'Not logged in'
+                    }
+                    self.send_data(response)
+            elif request == 'help':
+                response = {
+                    'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response': 'Info',
+                        'content': '''login <username> - log in with the given username \n
+                                    logout - log out \n
+                                    msg <message> - send message \n
+                                    names - list users in chat'''
+                       }
+                self.send_data(response)
+            else:
+                response ={
+                        'timestamp':time.strftime("%H:%M:%S"),
+                        'sender':'server',
+                        'response': 'Error',
+                        'content': 'not given command, use help'
+                    }
+                self.send_data(response)
+                
     def send_data(self, response):
         self.request.sendall(json.dumps(response))
         self.request.sendall("\n")
