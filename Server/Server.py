@@ -60,6 +60,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                         'response':'error',
                         'content':'already logged in'
                     }
+                    self.send_data(response)
                 elif not re.match("^[A-Za-z0-9]+$", content):
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
@@ -67,6 +68,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                         'response':'error',
                         'content':'Username can only contain letters and numbers, and cannot be empty'
                     }
+                    self.send_data(response)
                 else:
                     clients[self] = content
                     response = {
@@ -77,25 +79,25 @@ class ClientHandler(socketserver.BaseRequestHandler):
                         }
                     self.send_data(response)
                     self.logged_in = True
+                    # Making the history work
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
                         'response': 'history',
                         'content': messages
                         }
+                    print(response)
                     self.send_data(response)
             elif request == 'logout':
                 if self.logged_in:
                     self.logged_in = False
+                    print(clients[self])
+                    del clients[self]
                     response = {
                         'timestamp':time.strftime("%H:%M:%S"),
                         'sender':'server',
                         'response': 'info',
-<<<<<<< HEAD
                         'content': "Logout successful :)"
-=======
-                        'content': None
->>>>>>> e6b3990dc70f12ef77b579724fa1be63e1630cc9
                         }
                     self.send_data(response)
                 else:
@@ -109,13 +111,14 @@ class ClientHandler(socketserver.BaseRequestHandler):
             elif request == 'msg':
                 if self.logged_in:
                     if type(content) is str:
-                        messages.append(json.dumps(content))
                         response = {
                             'timestamp':time.strftime("%H:%M:%S"),
                             'sender': clients[self],
                             'response': 'message',
                             'content': content
                         }
+                        # Testing
+                        messages.append(json.dumps(response))
                         for client in clients:
                             client.send_data(response)
                     else:
@@ -163,7 +166,7 @@ class ClientHandler(socketserver.BaseRequestHandler):
                                     logout - log out \n
                                     msg <message> - send message \n
                                     names - list users in chat'''
-                       }
+                    }
                 self.send_data(response)
             else:
                 response ={
