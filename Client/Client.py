@@ -56,7 +56,11 @@ class Client:
         request = msg[0]
         content = ""
         if len(msg) > 1:
-            content = msg[1]
+            if request == 'msg' and len(msg)>2:
+                for word in msg[1:]:
+                    content += word + ' '
+            else:
+                content = msg[1]
         if request in ['logout', 'names', 'help']:
             content = None
         message = {
